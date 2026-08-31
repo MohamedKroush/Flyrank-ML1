@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prioritizing Content for Search-Performance Review — FlyRank Capstone</title>
+<style>
+  :root{
+    --bg:#f5f4ef;
+    --surface:#ffffff;
+    --ink:#16211d;
+    --muted:#57645f;
+    --line:#dcdad0;
+    --accent:#2453a6;
+    --accent-soft:#e9eff9;
+    --warn-soft:#f4ede1;
+    --warn-ink:#7a5a1e;
+    --serif: Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-font-smoothing:antialiased;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.65;
+    font-size:17px;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  a{color:var(--accent);text-decoration-thickness:1px;}
+  a:hover{text-decoration-style:dotted;}
+  code{
+    background:var(--accent-soft);
+    padding:1px 6px;
+    border-radius:4px;
+    font-size:0.88em;
+    color:#1c3d78;
+  }
+
+  /* ---- Header / hero ---- */
+  header.hero{
+    border-bottom:1px solid var(--line);
+    padding:76px 0 56px;
+  }
+  .kicker{
+    font-family:var(--serif);
+    font-style:italic;
+    color:var(--muted);
+    font-size:17px;
+    margin:0 0 14px;
+  }
+  h1{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:clamp(32px,5vw,48px);
+    line-height:1.15;
+    letter-spacing:-0.01em;
+    margin:0 0 22px;
+    max-width:15ch;
+  }
+  .dek{
+    font-size:19px;
+    color:var(--muted);
+    max-width:56ch;
+    margin:0 0 30px;
+  }
+  .headline-stat{
+    display:inline-flex;
+    align-items:baseline;
+    gap:10px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-left:4px solid var(--accent);
+    padding:12px 18px;
+    border-radius:4px;
+  }
+  .headline-stat .num{
+    font-family:var(--serif);
+    font-size:30px;
+    color:var(--accent);
+  }
+  .headline-stat .cap{
+    color:var(--muted);
+    font-size:14.5px;
+  }
+  .byline{
+    margin-top:34px;
+    font-size:14.5px;
+    color:var(--muted);
+  }
+
+  /* ---- Sections ---- */
+  section{
+    padding:52px 0;
+    border-bottom:1px solid var(--line);
+  }
+  section:last-of-type{border-bottom:none;}
+  h2{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:27px;
+    margin:0 0 22px;
+    letter-spacing:-0.01em;
+  }
+  h3{
+    font-size:16px;
+    font-weight:650;
+    margin:30px 0 10px;
+  }
+  p{margin:0 0 16px;max-width:66ch;}
+  ul, ol{margin:0 0 18px;padding-left:22px;max-width:64ch;}
+  li{margin:8px 0;}
+
+  .abstract-box{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:26px 28px;
+    font-size:16.5px;
+  }
+
+  .callout{
+    background:var(--accent-soft);
+    border-radius:6px;
+    padding:16px 20px;
+    margin:20px 0;
+    font-size:15.5px;
+  }
+  .callout strong{color:var(--accent);}
+
+  .caveat{
+    background:var(--warn-soft);
+    border-radius:6px;
+    padding:16px 20px;
+    margin:20px 0;
+    font-size:15.5px;
+    color:#3c2f18;
+  }
+  .caveat strong{color:var(--warn-ink);}
+
+  table{
+    border-collapse:collapse;
+    width:100%;
+    max-width:64ch;
+    margin:22px 0;
+    font-size:15.5px;
+  }
+  th, td{
+    text-align:left;
+    padding:10px 14px;
+    border-bottom:1px solid var(--line);
+  }
+  th{
+    font-weight:650;
+    color:var(--muted);
+    font-size:13.5px;
+  }
+  tr:last-child td{border-bottom:1px solid var(--line);}
+  tr.emph td{font-weight:650;}
+
+  .chart-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:22px 22px 8px;
+    margin:26px 0;
+    max-width:64ch;
+  }
+  .chart-card svg{display:block;width:100%;height:auto;}
+  .chart-caption{
+    font-size:13.5px;
+    color:var(--muted);
+    margin:8px 0 16px;
+  }
+
+  ol.recs > li{
+    padding-left:4px;
+  }
+  ol.recs strong{display:block;margin-bottom:2px;}
+
+  footer{
+    padding:40px 0 70px;
+    color:var(--muted);
+    font-size:14.5px;
+  }
+  footer a{color:var(--muted);}
+
+  @media (max-width:600px){
+    header.hero{padding:52px 0 40px;}
+    section{padding:38px 0;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">A FlyRank machine-learning capstone</p>
+    <h1>Prioritizing content for search-performance review</h1>
+    <p class="dek">Can a data-driven priority score help editors decide which pages to check first when search visibility starts to slip?</p>
+    <div class="headline-stat">
+      <span class="num">37.3%</span>
+      <span class="cap">of 94,559 evaluated pages showed an observed search-visibility decline</span>
+    </div>
+    <p class="byline">FlyRank internship warehouse release · March 2026 analysis window</p>
+  </div>
+</header>
+
+<section id="abstract">
+  <div class="wrap">
+    <h2>Abstract</h2>
+    <div class="abstract-box">
+      <p style="margin-bottom:0;">This research asks whether a data-driven priority score can help editors identify content pages that should be reviewed first for potential search-performance decline. Using pseudonymized FlyRank internship warehouse data, the analysis defines an observed decline outcome from changes in Google Search impressions and compares a transparent rule-based ranking against a Random Forest classifier. Across 94,559 evaluated content-level observations, the base rate of observed decline was 37.3%. The transparent ranking reached a Precision@50 of 0.480, and the Random Forest reached an ROC-AUC of 0.640 on a stratified evaluation split. Visibility, clicks, and average search position all behaved as directionally useful prioritization signals, but neither approach establishes a causal effect, and neither model was validated against a grouped or time-aware split — a limitation this paper states plainly rather than papering over.</p>
+    </div>
+  </div>
+</section>
+
+<section id="intro">
+  <div class="wrap">
+    <h2>1. Introduction &amp; problem statement</h2>
+    <p>An editorial team can have thousands of content pages and only a few hours a week to review any of them. The useful question isn't "what is wrong with this page" — it's simpler and more operational: <strong>which pages deserve a human look first?</strong></p>
+    <p>This project does not try to reverse-engineer Google's ranking algorithm, and it does not automate content changes. It builds a ranked review queue from measurable search-performance history, so that limited editorial attention goes where it's statistically most likely to matter.</p>
+    <div class="callout"><strong>Decision supported:</strong> an editor uses the ranked output to decide which pages to review first when review capacity is limited. The output is a queue with a priority score, a reason code, and a recommended action — not an automatic edit.</div>
+  </div>
+</section>
+
+<section id="data">
+  <div class="wrap">
+    <h2>2. Data</h2>
+    <p>The analysis uses the FlyRank internship warehouse release, working from a March 2026 mid-panel window rather than the sealed final-month sample, per the project's dataset guidance. The unit of analysis is one content page, aggregated to content-level search-performance measurements: impressions, clicks, and average search position.</p>
+    <p>Pseudonymized content and client identifiers are used only for grouping and joining pages to their history — never as model features. Product-decision fields (<code>health_score</code>, <code>priority_score</code>, <code>action_type</code>) and label-derived fields (<code>trend_direction</code>, <code>trend_pct</code>) are excluded from the feature set, since they would either encode a decision that hasn't been made yet or leak the outcome directly into the inputs.</p>
+    <p>No client names, domains, private queries, credentials, or raw exports appear anywhere in the analysis or in this paper.</p>
+  </div>
+</section>
+
+<section id="methodology">
+  <div class="wrap">
+    <h2>3. Methodology</h2>
+
+    <h3>Outcome definition</h3>
+    <p>A page is labeled as an <em>observed decline</em> when its impressions in the later portion of the analysis window fall more than 20% below the preceding period, subject to a minimum prior-period impression threshold that keeps very low-traffic pages from dominating the calculation.</p>
+
+    <h3>Transparent baseline</h3>
+    <p>The baseline is a simple, explainable rule: it flags pages with meaningful visibility (at least 250 monthly impressions) and a weak average position (worse than 20). It exists as a readable benchmark, not a finished product — its job is to show whether a more complex model earns its complexity.</p>
+
+    <h3>Random Forest model</h3>
+    <p>The comparison model is a Random Forest classifier trained on three observed features: <code>impressions_month</code>, <code>clicks_month</code>, and <code>avg_position_month</code>. It was evaluated on a 75/25 stratified random split.</p>
+
+    <div class="caveat">
+      <strong>Validation caveat.</strong> Because pages share client and content structure and the underlying data has temporal ordering, a stratified random split isn't the strongest possible test of generalization. A grouped split (holding out entire clients or content clusters) or a time-aware split (training on earlier weeks, testing on later ones) would give more convincing evidence that the model generalizes rather than memorizes patterns specific to this panel. The metrics below should be read as an <strong>initial evaluation</strong>, not a production validation.
+    </div>
+
+    <h3>Leakage checks</h3>
+    <p>None of the three model features are derived from the outcome definition itself, and no product-decision fields entered the model. Client and content identifiers were used only to group observations, never as predictive inputs.</p>
+  </div>
+</section>
+
+<section id="results">
+  <div class="wrap">
+    <h2>4. Results</h2>
+    <p>The overall base rate of observed decline across all 94,559 evaluated pages was 37.3%. Both the baseline and the model concentrated declining pages above that rate, though in different ways.</p>
+
+    <table>
+      <thead>
+        <tr><th>Approach</th><th>Precision</th><th>ROC-AUC</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Overall base rate</td><td>0.373</td><td>—</td></tr>
+        <tr><td>Rule baseline</td><td>0.409</td><td>—</td></tr>
+        <tr class="emph"><td>Random Forest</td><td>0.753</td><td>0.640</td></tr>
+      </tbody>
+    </table>
+
+    <p>Looked at as a ranked queue instead of a flat rule, the baseline's top 50 highest-ranked pages reached a Precision@50 of 0.480 — meaning 48.0% of those top 50 pages were observed to be declining, well above the 37.3% base rate. The broader binary version of the rule (250+ monthly impressions, position worse than 20) covered 15.8% of all pages at 0.409 precision.</p>
+
+    <h3>Visibility and position as signals</h3>
+    <p>Splitting pages into impression quartiles, the lowest-visibility quartile showed a 48.7% observed decline rate, versus 29.4% in the highest-visibility quartile — a clear, monotonic gradient. Search position was directionally useful but noisier: decline rates ran 34.8% for positions 1–10, 39.1% for 11–20, 43.0% for 21–30, and 40.4% for position 31 and beyond.</p>
+
+    <div class="chart-card">
+      <svg viewBox="0 0 560 260" role="img" aria-label="Observed decline rate by impression quartile, from 48.7% in the lowest-visibility quartile down to 29.4% in the highest-visibility quartile">
+        <line x1="60" y1="20" x2="60" y2="200" stroke="#dcdad0" stroke-width="1"/>
+        <line x1="60" y1="200" x2="540" y2="200" stroke="#dcdad0" stroke-width="1"/>
+        <text x="52" y="24" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="11" fill="#57645f" text-anchor="end">50%</text>
+        <text x="52" y="128" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="11" fill="#57645f" text-anchor="end">25%</text>
+        <text x="52" y="204" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="11" fill="#57645f" text-anchor="end">0%</text>
+        <line x1="60" y1="128" x2="540" y2="128" stroke="#eceae0" stroke-width="1"/>
+
+        <rect x="95" y="24" width="80" height="176" fill="#2453a6"/>
+        <text x="135" y="16" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="12" fill="#16211d" text-anchor="middle">48.7%</text>
+        <text x="135" y="222" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="11.5" fill="#57645f" text-anchor="middle">Lowest visibility</text>
+
+        <rect x="215" y="68" width="80" height="132" fill="#5b83c4"/>
+        <text x="255" y="60" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="12" fill="#16211d" text-anchor="middle">36.5%</text>
+        <text x="255" y="222" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="11.5" fill="#57645f" text-anchor="middle">Q2</text>
+
+        <rect x="335" y="76" width="80" height="124" fill="#5b83c4"/>
+        <text x="375" y="68" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="12" fill="#16211d" text-anchor="middle">34.5%</text>
+        <text x="375" y="222" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="11.5" fill="#57645f" text-anchor="middle">Q3</text>
+
+        <rect x="455" y="94" width="80" height="106" fill="#9fb6dd"/>
+        <text x="495" y="86" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="12" fill="#16211d" text-anchor="middle">29.4%</text>
+        <text x="495" y="222" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="11.5" fill="#57645f" text-anchor="middle">Highest visibility</text>
+      </svg>
+      <p class="chart-caption">Observed decline rate by impression quartile (n = 94,559).</p>
+    </div>
+
+    <div class="chart-card">
+      <svg viewBox="0 0 560 260" role="img" aria-label="Observed decline rate by search position band: 34.8% for positions 1-10, 39.1% for 11-20, 43.0% for 21-30, 40.4% for 31 and above">
+        <line x1="60" y1="20" x2="60" y2="200" stroke="#dcdad0" stroke-width="1"/>
+        <line x1="60" y1="200" x2="540" y2="200" stroke="#dcdad0" stroke-width="1"/>
+        <text x="52" y="24" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="11" fill="#57645f" text-anchor="end">50%</text>
+        <text x="52" y="128" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="11" fill="#57645f" text-anchor="end">25%</text>
+        <text x="52" y="204" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="11" fill="#57645f" text-anchor="end">0%</text>
+        <line x1="60" y1="128" x2="540" y2="128" stroke="#eceae0" stroke-width="1"/>
+
+        <rect x="95" y="88" width="80" height="112" fill="#5b83c4"/>
+        <text x="135" y="80" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="12" fill="#16211d" text-anchor="middle">34.8%</text>
+        <text x="135" y="222" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="11.5" fill="#57645f" text-anchor="middle">Position 1–10</text>
+
+        <rect x="215" y="74" width="80" height="126" fill="#5b83c4"/>
+        <text x="255" y="66" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="12" fill="#16211d" text-anchor="middle">39.1%</text>
+        <text x="255" y="222" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="11.5" fill="#57645f" text-anchor="middle">Position 11–20</text>
+
+        <rect x="335" y="45" width="80" height="155" fill="#2453a6"/>
+        <text x="375" y="37" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="12" fill="#16211d" text-anchor="middle">43.0%</text>
+        <text x="375" y="222" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="11.5" fill="#57645f" text-anchor="middle">Position 21–30</text>
+
+        <rect x="455" y="61" width="80" height="139" fill="#3c69b3"/>
+        <text x="495" y="53" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="12" fill="#16211d" text-anchor="middle">40.4%</text>
+        <text x="495" y="222" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="11.5" fill="#57645f" text-anchor="middle">Position 31+</text>
+      </svg>
+      <p class="chart-caption">Observed decline rate by average search position band (n = 94,559).</p>
+    </div>
+
+    <h3>Random Forest performance</h3>
+    <p>At the default 0.5 threshold, the Random Forest reached 0.753 precision, 0.132 recall, and 0.660 accuracy, with an ROC-AUC of 0.640. It was selective rather than comprehensive: when it flagged a page, that page was usually genuinely declining, but it missed most of the declining pages in the dataset. Feature importance ranked monthly impressions highest (0.572), followed by clicks (0.244) and average position (0.185) — associations the model learned, not causal weights.</p>
+  </div>
+</section>
+
+<section id="limitations">
+  <div class="wrap">
+    <h2>5. Limitations &amp; honest framing</h2>
+    <ul>
+      <li>The analysis identifies associations in observed search-performance data. It does not establish that changing content, metadata, or position would cause a page to recover.</li>
+      <li>The decline definition depends on a specific 20% threshold and observation window; other choices could yield different results.</li>
+      <li>The panel is unbalanced across clients, and analytics history varies in depth, so engagement fields need careful interpretation for newer or smaller accounts.</li>
+      <li>The baseline is intentionally simple and doesn't capture every factor influencing content performance.</li>
+      <li>The Random Forest was evaluated on a stratified random split, not a grouped or time-aware one — see the validation caveat in Section 3. Treat its metrics as an initial read, not proof of production readiness.</li>
+      <li>This work does not predict, reproduce, or explain Google's ranking algorithm.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="recommendations">
+  <div class="wrap">
+    <h2>6. Ranked recommendations</h2>
+    <ol class="recs">
+      <li><strong>Review visible-but-weak-position pages first.</strong> Pages with real impression volume and a position worse than 20 combine enough visibility to matter with enough room to improve.</li>
+      <li><strong>Treat position 21–30 as the highest-priority band.</strong> It showed the highest observed decline rate (43.0%) of any position group in this dataset — higher than pages ranking on page one or buried past position 30.</li>
+      <li><strong>Handle low-visibility pages as a separate track.</strong> They had the highest overall decline rate (48.7%), but low visibility alone doesn't mean a page needs an urgent rewrite — it may simply be new, seasonal, or niche.</li>
+      <li><strong>Keep a human in the loop.</strong> The queue surfaces candidates; an editor still needs to check search intent, content quality, and freshness before making any change.</li>
+      <li><strong>Re-check the queue periodically.</strong> If the traffic mix, measurement coverage, or base decline rate shifts, the priority score should be recalibrated rather than trusted indefinitely.</li>
+    </ol>
+  </div>
+</section>
+
+<section id="reproducibility">
+  <div class="wrap">
+    <h2>7. Reproducibility</h2>
+    <p>The full analysis, feature construction, model comparison, and chart generation live in the project's capstone notebook.</p>
+    <ul>
+      <li><a href="https://github.com/MohamedKroush/Flyrank-ML1" target="_blank" rel="noopener">Project repository</a></li>
+      <li><a href="https://github.com/MohamedKroush/Flyrank-ML1/blob/main/work/notebooks/capstone.ipynb" target="_blank" rel="noopener">Capstone notebook</a></li>
+      <li><a href="https://github.com/MohamedKroush/Flyrank-ML1/tree/main/work/notebooks" target="_blank" rel="noopener">All project notebooks</a></li>
+    </ul>
+  </div>
+</section>
+
+<section id="acknowledgments">
+  <div class="wrap">
+    <h2>8. Acknowledgments &amp; data credit</h2>
+    <p>Built on the FlyRank ML internship dataset. Data source: <a href="https://flyrank.ai" target="_blank" rel="noopener">flyrank.ai</a>.</p>
+  </div>
+</section>
+
+<section id="takeaway">
+  <div class="wrap">
+    <h2>9. Research takeaway</h2>
+    <p>A simple, transparent rule already concentrates declining pages well above the base rate, and a Random Forest adds meaningfully higher precision on top of it. But the real value here isn't automated prediction — it's giving editors a repeatable, explainable way to decide where to look first. The clearest next step is tightening the validation: a grouped or time-aware split would tell us whether these patterns hold up on genuinely unseen clients and future weeks, not just an unseen slice of the same panel.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>FlyRank ML capstone — search-performance review prioritization, 2026</p>
+  </div>
+</footer>
+
+</body>
+</html>
